@@ -1,10 +1,25 @@
 #!/bin/sh
 
-mount -t proc proc /proc
-mount -t sysfs sysfs /sys
-mount -t devtmpfs devtmpfs /dev || mount -t tmpfs tmpfs /dev
-mount -t devpts devpts /dev/pts
-mount -t tmpfs tmpfs /run
+# Fail fast
+set -e
+
+shutdown() {
+    echo "Shutting down..."
+
+    sync
+    umount -a -r
+
+    poweroff -f
+}
+
+reboot() {
+    echo "Rebooting..."
+
+    sync
+    umount -a -r
+
+    reboot -f
+}
 
 cat <<'EOF'
  ███▄ ▄███▓ ██▓ ██▀███   ▄▄▄       ██▓
@@ -18,4 +33,26 @@ cat <<'EOF'
        ░    ░     ░           ░  ░ ░  
 EOF
 
-exec /bin/sh
+echo "[minit] Starting minimal init..."
+
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev || mount -t tmpfs tmpfs /dev
+mount -t devpts devpts /dev/pts
+mount -t tmpfs tmpfs /run
+echo "[minit] Mounted filesystems"
+
+trap shutdown INT TERM
+trap reboot_system HUP
+echo "[minit] Trapped signals"
+
+reap() {
+    while true; do
+        wait
+    done
+}
+reap &
+REAPER_PID=$!
+
+echo "[init] Starting login on tty1"
+/bin/busybox getty -L tty1 0 linux
