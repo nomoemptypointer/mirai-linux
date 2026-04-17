@@ -199,9 +199,6 @@ chmod +x builds-cache/initramfs/etc/resolv.conf
 cp -a "./initscript/init" "./builds-cache/initramfs/init"
 chmod +x ./builds-cache/initramfs/init
 
-# Not needed
-rm ./builds-cache/initramfs/linuxrc
-
 # Pack initramfs into init.cpio
 (cd ./builds-cache/initramfs/ && find . -print0 | cpio --null -ov --format=newc) > ./builds-cache/init.cpio
 
