@@ -1,8 +1,10 @@
 #!/bin/sh
 
-mount -t proc proc /proc &
-mount -t sysfs sysfs /sys &
-mount -t devtmpfs devtmpfs /dev &
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev || mount -t tmpfs tmpfs /dev
+mount -t devpts devpts /dev/pts
+mount -t tmpfs tmpfs /run
 
 cat <<'EOF'
  ███▄ ▄███▓ ██▓ ██▀███   ▄▄▄       ██▓
@@ -16,4 +18,4 @@ cat <<'EOF'
        ░    ░     ░           ░  ░ ░  
 EOF
 
-/bin/sh
+exec /bin/sh
