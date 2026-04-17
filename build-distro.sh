@@ -68,7 +68,7 @@ mount "${LOOPDEV}p1" "$EFI_PATH"
 
 # Clone required repos
 if [ ! -d linux ]; then
-    git clone --depth 1 https://github.com/torvalds/linux.git
+    git clone --depth 1 --branch v6.6 https://github.com/torvalds/linux.git
 fi
 
 if [ ! -d busybox ]; then
